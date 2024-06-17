@@ -129,6 +129,7 @@ echo "" >> "conf/bblayers.conf"
 echo "# Ka-Ro Yocto Project Release layers" >> "conf/bblayers.conf"
 add_layer meta-karo
 add_layer meta-karo-distro
+add_layer meta-rauc
 
 case $KARO_DISTRO in
     karo-custom-*)
