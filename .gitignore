@@ -1,0 +1,6 @@
+# quilt files
+/.pc
+/patches
+
+# editor backup files
+*~
