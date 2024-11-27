@@ -147,6 +147,17 @@ if $build_dir_setup_enabled;then
     fi
     echo "Configuring for ${MACHINE}"
 
+    case ${MACHINE%-*} in
+        txmp|qsmp)
+            EULA_FILE="${EULA_FILE:-${LAYERDIR}/meta-st/meta-st-stm32mp/conf/eula/ST_EULA_SLA}"
+            if [ ! -e "$EULA_FILE" ];then
+                echo -e "ERROR: EULA not found at $EULA_FILE."
+                clean_up
+                return 1
+            fi
+            ;;
+    esac
+
     shopt -q nullglob && nullglob=false || nullglob=true
     $nullglob && shopt -s nullglob
     distro_dirs="`find ${LAYERDIR} -path "*/conf/distro/${DISTRO}.conf" -printf "%h\n"`"
@@ -256,6 +267,13 @@ EOF
     done
 
     generated_config=1
+fi
+
+if [ -n "$EULA_FILE" ];then
+    if ! bash ${BSPDIR}/handle-eula.sh "${EULA_FILE}";then
+        clean_up
+        return 1
+    fi
 fi
 
 cat <<EOF
