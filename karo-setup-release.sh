@@ -13,8 +13,8 @@ PROGNAME="setup-environment"
 SRCDIR=layers
 
 exit_message () {
-    echo "To return to this build environment later please run:"
-    echo -e "\tsource setup-environment <build_dir>"
+    echo -e "\nTo return to this build environment later please run:"
+    echo -e "\tsource setup-environment $BUILD_DIR"
 }
 
 usage() {
@@ -32,12 +32,11 @@ clean_up() {
     unset CWD BUILD_DIR KARO_DISTRO
     unset usage clean_up
     unset ARM_DIR
-    exit_message
 }
 
 layer_exists() {
     for l in $layers;do
-	[ "$1" = "$l" ] && return
+        [ "$1" = "$l" ] && return
     done
     false
 }
@@ -54,16 +53,16 @@ unset KARO_DISTRO
 
 while getopts b:h: opt; do
     case ${opt} in
-	b)
-	    BUILD_DIR="$OPTARG"
-	    echo "Build directory is: $BUILD_DIR"
-	    ;;
-	h)
-	    setup_help=true
-	    ;;
-	*)
-	    setup_error=true
-	    ;;
+        b)
+            BUILD_DIR="$OPTARG"
+            echo "Build directory is: $BUILD_DIR"
+            ;;
+        h)
+            setup_help=true
+            ;;
+        *)
+            setup_error=true
+            ;;
     esac
 done
 shift $((OPTIND-1))
@@ -74,14 +73,17 @@ if [ $# -ne 0 ]; then
 fi
 OPTIND=$OLD_OPTIND
 if test $setup_help;then
-    usage && clean_up && return 1
+    usage
+    clean_up
+    return 1
 elif test $setup_error;then
-    clean_up && return 1
+    clean_up
+    return 1
 fi
 
 if [ -z "$DISTRO" ]; then
     if [ -z "$KARO_DISTRO" ]; then
-	KARO_DISTRO='karo-wayland'
+        KARO_DISTRO='karo-wayland'
     fi
     export DISTRO="$KARO_DISTRO"
 else
@@ -102,7 +104,7 @@ layers=""
 CURRENT_CWD="$CWD"
 
 # Set up the basic yocto environment
-DISTRO=${KARO_DISTRO:-DISTRO} MACHINE=$MACHINE KARO_BASEBOARD=${KARO_BASEBOARD} . ./$PROGNAME $BUILD_DIR
+DISTRO=${KARO_DISTRO:-DISTRO} MACHINE=$MACHINE KARO_BASEBOARD=${KARO_BASEBOARD} . ./$PROGNAME $BUILD_DIR || return
 
 # Set CWD to a value again as it's being unset by the external scripts calls
 [ -z "$CWD" ] && CWD="$CURRENT_CWD"
@@ -133,19 +135,20 @@ add_layer meta-rauc
 
 case $KARO_DISTRO in
     karo-custom-*)
-	if [ -d "${BSPDIR}/${SRCDIR}/meta${KARO_DISTRO#karo-custom}" ];then
-	    add_layer "meta${KARO_DISTRO#karo-custom}"
-	else
-	    echo "No custom layer found for distro: '$KARO_DISTRO'" >&2
-	fi
-	;;
+        if [ -d "${BSPDIR}/${SRCDIR}/meta${KARO_DISTRO#karo-custom}" ];then
+            add_layer "meta${KARO_DISTRO#karo-custom}"
+        else
+            echo "No custom layer found for distro: '$KARO_DISTRO'" >&2
+        fi
+        ;;
     *)
-	if [ "$KARO_DISTRO" != "karo-minimal" ];then
-	    add_layer meta-qt6
-	fi
+        if [ "$KARO_DISTRO" != "karo-minimal" ];then
+            add_layer meta-qt6
+        fi
 esac
 
 echo "BSPDIR='$(cd "$BSPDIR";pwd)'"
 echo "BUILD_DIR='$(pwd -P)'"
 
+exit_message
 clean_up

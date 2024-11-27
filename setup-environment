@@ -90,7 +90,7 @@ LONGOPTS="help"
 ARGS=$(getopt --options $SHORTOPTS  \
   --longoptions $LONGOPTS --name $PROGNAME -- "$@" )
 # Print the usage menu if invalid options are specified
-if [ $? != 0 -o $# -lt 1 ]; then
+if [ $? != 0 -o $# -lt 1 ];then
    usage && clean_up
    return 1
 fi
@@ -110,12 +110,12 @@ while true;do
     esac
 done
 
-if [ "$(whoami)" = "root" ]; then
+if [ "$(whoami)" = "root" ];then
     echo "ERROR: do not use yocto as root! Exiting..."
     return 1
 fi
 
-if [ ! -e "${1}/conf/local.conf" ]; then
+if [ ! -e "${1}/conf/local.conf" ];then
     build_dir_setup_enabled=true
 else
     build_dir_setup_enabled=false
@@ -128,7 +128,7 @@ if $build_dir_setup_enabled;then
         clean_up
         return 1
     fi
-    if [ -z "$DISTRO" ]; then
+    if [ -z "$DISTRO" ];then
         usage
         echo -e "ERROR: You must set DISTRO when creating a new build directory."
         clean_up
@@ -138,7 +138,7 @@ if $build_dir_setup_enabled;then
     # Check the machine type specified
     LIST_MACHINES=`find layers/ -path '*/conf/machine/*.conf'`
     VALID_MACHINE=`echo "$LIST_MACHINES" | grep "/${MACHINE}.conf$" | wc -l`
-    if [ "$MACHINE" = "" ] || [ "$VALID_MACHINE" = "0" ]; then
+    if [ "$MACHINE" = "" ] || [ "$VALID_MACHINE" = "0" ];then
         echo -e "\nThe \$MACHINE you have specified ($MACHINE) is not supported by this build setup"
         usage && clean_up
         return 1
@@ -174,32 +174,32 @@ if $build_dir_setup_enabled;then
     done
 fi
 
-if [ -z "$SDKMACHINE" ]; then
+if [ -z "$SDKMACHINE" ];then
     SDKMACHINE=`uname -m`
 fi
 
 OEROOT=$PWD/layers/poky
-if [ -e $PWD/layers/oe-core ]; then
+if [ -e $PWD/layers/oe-core ];then
     OEROOT=$PWD/layers/oe-core
 fi
 
 # Ensure all files in layers/base are kept in sync with project root
 updated=false
-for f in "$CWD/layers/base/"*; do
+for f in "$CWD/layers/base/"*;do
     [ -f "$f" ] || continue
     file="$(basename $f)"
-    if echo "$file" | grep -q '~$'; then
+    if echo "$file" | grep -q '~$';then
         continue
     fi
 
-    if ! cmp -s "$file" "$f"; then
+    if ! cmp -s "$file" "$f";then
         updated=true
         [ -e "$file" ] && chmod u+w "$file"
         cp "$f" "$file"
     fi
 done
 $nullglob && shopt -u nullglob
-if $updated; then
+if $updated;then
     echo "The project root content has been updated. Please run '$PROGNAME' again."
     return
 fi
@@ -207,8 +207,9 @@ fi
 . "$OEROOT/oe-init-build-env" "$CWD/$1" > /dev/null
 
 # if conf/local.conf not generated, no need to go further
-if [ ! -e conf/local.conf ]; then
-    clean_up && return 1
+if [ ! -e conf/local.conf ];then
+    clean_up
+    return 1
 fi
 
 # Clean up PATH, because if it includes tokens to current directories somehow,
@@ -216,7 +217,7 @@ fi
 export PATH="`echo $PATH | sed 's/\(:.\|:\)*:/:/g;s/^.\?://;s/:.\?$//'`"
 
 generated_config=
-if $build_dir_setup_enabled; then
+if $build_dir_setup_enabled;then
     mv conf/local.conf conf/local.conf.sample
     # Generate the local.conf based on the Yocto defaults
     grep -v '^#\|^$' conf/local.conf.sample > conf/local.conf
@@ -245,8 +246,8 @@ EOF
     fi
     cp $TEMPLATECONF/* conf/
 
-    for s in $HOME/.oe $HOME/.yocto; do
-        if [ -e $s/site.conf ]; then
+    for s in $HOME/.oe $HOME/.yocto;do
+        if [ -e $s/site.conf ];then
             echo "Linking $s/site.conf to conf/site.conf"
             ln -s $s/site.conf conf
         fi
@@ -272,12 +273,12 @@ For a Ka-Ro specific Yocto guide please refer to:
 ${bitbake_target:+\
 You can start your build now with:\
 $(for i in ${bitbake_target:-core-image-minimal};do \
-    echo -ne "\n    bitbake $i"; \
+    echo -ne "\n    bitbake $i";\
 done )}
 
 EOF
 
-if [ -n "$generated_config" ]; then
+if [ -n "$generated_config" ];then
     cat <<EOF
 Your build environment has been configured with:
 
