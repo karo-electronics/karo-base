@@ -272,5 +272,5 @@ SANITY_TESTED_DISTROS:append = " devuan-4"
 unset SOURCE_DATE_EPOCH
 REPRODUCIBLE_TIMESTAMP_ROOTFS = ""
 KERNEL_DEBUG_TIMESTAMPS = "1"
-IMAGE_PREPROCESS_COMMAND:remove = "reproducible_final_image_task;"
+IMAGE_PREPROCESS_COMMAND:remove = "reproducible_final_image_task"
 SKIP_META_RAUC_FEATURE_CHECK = "1"
