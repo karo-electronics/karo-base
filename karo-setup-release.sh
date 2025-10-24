@@ -133,6 +133,12 @@ add_layer meta-karo
 add_layer meta-karo-distro
 add_layer meta-rauc
 
+case $MACHINE in
+    txmp-2570)
+	echo "" >> "conf/bblayers.conf"
+	echo "# STM layers" >> "conf/bblayers.conf"
+	add_layer meta-st/meta-st-stm32mp-tsn-swch
+esac
 case $KARO_DISTRO in
     karo-custom-*)
         if [ -d "${BSPDIR}/${SRCDIR}/meta${KARO_DISTRO#karo-custom}" ];then
