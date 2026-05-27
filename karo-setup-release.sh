@@ -121,7 +121,7 @@ else
     cp conf/local.conf.org conf/local.conf
 fi
 
-if [ ! -e "$BUILD_DIR/conf/bblayers.conf.org" ]; then
+if [ ! -e "conf/bblayers.conf.org" ]; then
     cp conf/bblayers.conf conf/bblayers.conf.org
 else
     cp conf/bblayers.conf.org conf/bblayers.conf
